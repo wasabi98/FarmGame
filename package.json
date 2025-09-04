@@ -1,0 +1,19 @@
+{
+  "name": "farmgame",
+  "version": "1.0.0",
+  "main": "pixi.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "pixi.js": "^8.11.0"
+  },
+  "devDependencies": {
+    "@types/pixi.js": "^4.8.9",
+    "vite": "^7.0.3"
+  }
+}
