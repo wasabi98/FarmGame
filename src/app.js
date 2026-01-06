@@ -21,23 +21,17 @@ import FarmLandTile from "./FarmLandTile.js";
 
     gridManager.grid.forEach(i => {
         i.forEach( j => {
-           //j.setCrop(new WheatCrop(j));
            j.crop = new WheatCrop(j);
         })
     });
 
     gridManager.grid.forEach(i => {
         i.forEach( j => {
-            /*setTimeout(() =>  {
-            console.log( j.x + ' ' + j.y + ' id updated');
-            //console.log( message + ' id updated;');
-            }, 1000);*/
             j.crop.update(1);
-            
         })
     });
 
-    const texture = await Assets.load('./kaposzta.png');
+    const texture = await Assets.load('./assets/sprites/farmland.png');
 
     const RECT_WIDTH = 100;
     const RECT_HEIGHT = 100;
