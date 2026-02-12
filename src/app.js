@@ -1,11 +1,11 @@
-import { Application, Assets, Container, Sprite, Ticker, Graphics  } from "pixi.js";
-import GridManager from "./gridManager.js";
-import WheatCrop from "./WheatCrop.js";
-import FarmLandTile from "./FarmLandTile.js";
+import { Application, Assets, Container, Sprite, Ticker, Graphics, Polygon  } from "pixi.js";
+import GridManager from "./Structure/GridManager.js";
+import WheatCrop from "./Structure/WheatCrop.js";
+import FarmLandTile from "./Structure/FarmLandTile.js";
+import TileDrawing from "./Drawing/TileDrawing.js";
 
-(async () => 
+async function initApp()
 {
-
     const app = new Application();
 
     await app.init({
@@ -16,56 +16,36 @@ import FarmLandTile from "./FarmLandTile.js";
     app.canvas.style.position = 'absolute';
 
     document.body.appendChild(app.canvas);
+    return app;
+
+}
+(async () => 
+{
+    const app = await initApp();
 
     let gridManager = new GridManager(4, 7);
-
-    gridManager.grid.forEach(i => {
-        i.forEach( j => {
-           j.crop = new WheatCrop(j);
-        })
-    });
-
-    gridManager.grid.forEach(i => {
-        i.forEach( j => {
-            j.crop.update(1);
-        })
-    });
-
+    gridManager.fill();
+   
     const texture = await Assets.load('./assets/sprites/farmland.png');
 
-    const RECT_WIDTH = 100;
-    const RECT_HEIGHT = 100;
-    const RECT_PADDING = 10;
-    const X_ORIGIN = (app.renderer.width / 2) - (RECT_WIDTH * gridManager.grid.length + RECT_PADDING * (gridManager.grid.length - 1)) / 2;
-    const Y_ORIGIN = (app.renderer.height / 2) - (RECT_HEIGHT * gridManager.grid[0].length + RECT_PADDING * (gridManager.grid[0].length - 1)) / 2;
+    
     const container = new Container();
+
+    const RECT_WIDTH = TileDrawing.RECT_WIDTH;
+    const RECT_HEIGHT = TileDrawing.RECT_HEIGHT;
+    const RECT_PADDING = TileDrawing.RECT_PADDING;
+
+    TileDrawing.X_ORIGIN = (app.renderer.width / 2) - (RECT_WIDTH * gridManager.grid.length + RECT_PADDING * (gridManager.grid.length - 1)) / 2;
+    TileDrawing.Y_ORIGIN = (app.renderer.height / 2) - (RECT_HEIGHT * gridManager.grid[0].length + RECT_PADDING * (gridManager.grid[0].length - 1)) / 2;
+
     gridManager.grid.forEach(i => {
         i.forEach( j => {
-            const x = (j.x * (RECT_WIDTH + RECT_PADDING)) + X_ORIGIN;
-            const y = (j.y * (RECT_HEIGHT + RECT_PADDING)) + Y_ORIGIN;
+            const tile = new TileDrawing({x: j.x, y: j.y});
+            // console.log(tile);
+
+            const sprite = tile.drawTile(texture);
             
-            // const graphic = new Graphics();
-            // graphic.x = x;  // Position the graphics object
-            // graphic.y = y;
-            // graphic.rect(0, 0, RECT_WIDTH, RECT_HEIGHT).fill([0, 0, 0]);
-            // container.addChild(graphic);
-
-            const sprite = new Sprite(texture);
-
-            sprite.x = x;
-            sprite.y = y;
-            /*
-            console.log('x is: ' + x);
-            console.log('y is: ' + y);
-            console.log('---------');
-            */
-            sprite.width = RECT_WIDTH;
-            sprite.height = RECT_HEIGHT;
-            sprite.alpha = 0.0;
-
-            sprite.eventMode = 'static';
-            sprite.cursor = 'pointer';
-
+           
             sprite.on ('pointerdown', (event) =>
             {
                 console.log("clicked");
@@ -78,12 +58,20 @@ import FarmLandTile from "./FarmLandTile.js";
                 console.log('y is: ' + sprite.y);
                 console.log('---------');
             });
-
+            /*
+            let g = new PIXI.Graphics();
+            g.beginFill(0x000000);
+            g.drawPolygon(poly);
+            g.endFill();
+            g.x = x;
+            g.y = y;
+            
+            app.stage.addChild(g);
+            */
             container.addChild(sprite);
         })
     });
     app.stage.addChild(container);
-
     console.log(gridManager.grid[0].length);
 
     /*const container = new Container();
@@ -120,7 +108,6 @@ import FarmLandTile from "./FarmLandTile.js";
     let wc = new WheatCrop(fl);
     fl.setCrop(wc);
 
-    
 
     app.ticker.add((time) => {
         timer += app.ticker.deltaMS;
