@@ -1,14 +1,15 @@
-import { Sprite, Polygon } from 'pixi.js';
+import { Sprite, Polygon, Graphics, Container } from 'pixi.js';
 
 export default class TileDrawing
 {
-    
     static RECT_WIDTH = 100;
     static RECT_HEIGHT = 100;
     static RECT_PADDING = 10;
     static X_ORIGIN = 0;
     static Y_ORIGIN = 0;
     
+    static DEBUG = false;
+
     constructor({width = TileDrawing.RECT_WIDTH, height = TileDrawing.RECT_HEIGHT, padding = TileDrawing.RECT_PADDING, x = 0, y = 0} = {})
     {
         this.width = width;
@@ -21,34 +22,39 @@ export default class TileDrawing
     drawTile(texture) {
         const x = (this.x * (this.width + this.padding)) + TileDrawing.X_ORIGIN;
         const y = (this.y * (this.height + this.padding)) + TileDrawing.Y_ORIGIN;
-
+        const container = new Container();
         const sprite = new Sprite(texture);
 
-        sprite.x = x;
-        sprite.y = y;
+        container.position.set(x, y);
 
         sprite.width = this.width;
         sprite.height = this.height;
         sprite.alpha = 0.0;
 
-        sprite.eventMode = 'static';
-        sprite.cursor = 'pointer';
+        container.eventMode = 'static';
+        container.cursor = 'pointer';
+       
+        const romboid = [
+            this.width * 0.5,    this.height * 0.25,
+            this.width,          this.height * 0.5 ,
+            this.width * 0.5,    this.height * 0.75,
+            0,                   this.height * 0.5 
+        ];
 
-        const romboid = {
-            a: {x: this.width * 0.5,    y: this.height * 0.25   },
-            b: {x: this.width,          y: this.height * 0.5    },
-            c: {x: this.width * 0.5,    y: this.height * 0.75   },
-            d: {x: 0,                   y: this.height * 0.5    }
-        };
-        const poly =  new Polygon(
-            [
-                romboid.a.x, romboid.a.y,
-                romboid.b.x, romboid.b.y,
-                romboid.c.x, romboid.c.y,
-                romboid.d.x, romboid.d.y
-            ]);
+        const poly =  new Polygon(romboid);
+        container.hitArea = poly;
 
-        sprite.hitArea = poly;
-        return sprite;
+        container.addChild(sprite);
+        container.sprite = sprite;
+
+        if(TileDrawing.DEBUG){
+            console.log('Debug');
+            let g = new Graphics();
+            g.poly(romboid).fill({ color: 0x00ff00, alpha: 0.2 });
+            
+            container.addChild(g);
+        }
+        
+        return container;
     }
 }

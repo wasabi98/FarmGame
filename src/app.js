@@ -4,6 +4,40 @@ import WheatCrop from "./Structure/WheatCrop.js";
 import FarmLandTile from "./Structure/FarmLandTile.js";
 import TileDrawing from "./Drawing/TileDrawing.js";
 
+function test()
+{
+
+    const romboid = {
+        a: {x: 100 * 0.5,    y: 100 * 0.25   },
+        b: {x: 100,          y: 100 * 0.5    },
+        c: {x: 100 * 0.5,    y: 100 * 0.75   },
+        d: {x: 0,            y: 100 * 0.5    }
+    };
+
+    const poly =  new Polygon(
+        [
+            romboid.a.x, romboid.a.y,
+            romboid.b.x, romboid.b.y,
+            romboid.c.x, romboid.c.y,
+            romboid.d.x, romboid.d.y
+        ]);
+    
+    const points = [
+        100 * 0.5,   100 * 0.25, 
+        100,         100 * 0.5,
+        100 * 0.5,  100 * 0.75,
+        0,           100 * 0.5  
+    ];
+
+    const container = new Container();
+
+    let g = new Graphics();
+    g.poly(points).fill({ color: 0x00ff00 });
+
+    container.addChild(g);
+
+    return container;
+}
 async function initApp()
 {
     const app = new Application();
@@ -19,8 +53,10 @@ async function initApp()
     return app;
 
 }
+//TODO: Clean up this mess
 (async () => 
-{
+{   
+    const TEST = false;
     const app = await initApp();
 
     let gridManager = new GridManager(4, 7);
@@ -41,21 +77,20 @@ async function initApp()
     gridManager.grid.forEach(i => {
         i.forEach( j => {
             const tile = new TileDrawing({x: j.x, y: j.y});
-            // console.log(tile);
 
-            const sprite = tile.drawTile(texture);
+            const spriteContainer = tile.drawTile(texture);
             
            
-            sprite.on ('pointerdown', (event) =>
+            spriteContainer.on ('pointerdown', (event) =>
             {
                 console.log("clicked");
-                sprite.alpha = 0.0;
+                spriteContainer.sprite.alpha = 0.0;
                 let crop = j.crop;
                 crop.status = 'growing';
                 crop.growthTimeLeft = crop.growthTime;
 
-                console.log('x is: ' + sprite.x);
-                console.log('y is: ' + sprite.y);
+                console.log('x is: ' + spriteContainer.x);
+                console.log('y is: ' + spriteContainer.y);
                 console.log('---------');
             });
             /*
@@ -68,11 +103,26 @@ async function initApp()
             
             app.stage.addChild(g);
             */
-            container.addChild(sprite);
+            container.addChild(spriteContainer);
         })
     });
     app.stage.addChild(container);
     console.log(gridManager.grid[0].length);
+
+
+    if(TEST)
+    {
+        const testContainer = test();
+        testContainer.x = 300;
+        testContainer.y = 300;
+
+        console.log(testContainer);
+
+        app.stage.addChild(testContainer);
+    }
+    
+
+
 
     /*const container = new Container();
     for(let i = 0; i < 3; i++)
@@ -131,7 +181,7 @@ async function initApp()
                         let index = j + (i * gridManager.grid[i].length);
                         let child = container.getChildAt(index);
 
-                        child.alpha = alpha;
+                        child.sprite.alpha = alpha;
                         //child.clear();
                         //child.rect(0, 0, RECT_WIDTH, RECT_HEIGHT).fill([0,color,0]); 
                 }
