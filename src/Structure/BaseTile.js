@@ -1,8 +1,9 @@
+
+
 export default class BaseTile
 {
-    constructor(x, y)
+    constructor(point)
     {
-        this.x = x;
-        this.y = y;
+        this.point = point
     }
 }

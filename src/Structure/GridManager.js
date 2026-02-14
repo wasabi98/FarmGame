@@ -1,5 +1,6 @@
 import FarmLandTile from "./FarmLandTile.js";
 import WheatCrop from "./WheatCrop.js";
+import { Point } from 'pixi.js';
 
 export default class GridManager 
 {
@@ -7,7 +8,7 @@ export default class GridManager
   {
     this.width = width;
     this.height = height;
-    this.grid = Array(width).fill().map((_, col) => Array(height).fill().map((_, row) => new FarmLandTile(col, row)));
+    this.grid = Array(width).fill().map((_, col) => Array(height).fill().map((_, row) => new FarmLandTile(new Point(col, row))));
   }
   fill()
   {

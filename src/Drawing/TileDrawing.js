@@ -1,31 +1,55 @@
-import { Sprite, Polygon, Graphics, Container } from 'pixi.js';
+import { Sprite, Polygon, Graphics, Container, Point, Matrix } from 'pixi.js';
+import 'pixi.js/math-extras';
 
 export default class TileDrawing
 {
     static RECT_WIDTH = 100;
     static RECT_HEIGHT = 100;
     static RECT_PADDING = 10;
-    static X_ORIGIN = 0;
-    static Y_ORIGIN = 0;
-    
+    static ORIGIN_POINT = new Point(0, 0);
+    static i1 = new Point(1, 0.5).normalize();
+    static j1 = new Point(1, -0.5).normalize();
+    static baseMatrix = new Matrix(
+        TileDrawing.i1.x,   TileDrawing.i1.y,   // a, b
+        TileDrawing.j1.x,   TileDrawing.j1.y,   // c, d
+        0,                  0                   // tx, ty
+    )
+
+
     static DEBUG = false;
 
-    constructor({width = TileDrawing.RECT_WIDTH, height = TileDrawing.RECT_HEIGHT, padding = TileDrawing.RECT_PADDING, x = 0, y = 0} = {})
+    constructor({width = TileDrawing.RECT_WIDTH, height = TileDrawing.RECT_HEIGHT, padding = TileDrawing.RECT_PADDING, gridPoint = new Point(0, 0)} = {})
     {
         this.width = width;
         this.height = height;
         this.padding = padding;
-        this.x = x;
-        this.y = y;
+        // whole number of the position in the grid
+        this.gridPoint = gridPoint;
     }
 
     drawTile(texture) {
-        const x = (this.x * (this.width + this.padding)) + TileDrawing.X_ORIGIN;
-        const y = (this.y * (this.height + this.padding)) + TileDrawing.Y_ORIGIN;
+
+        let point1 = new Point();
+        const dimensions = new Point(this.height / 2, this.width / 2);
+        const padding = new Point(this.padding, this.padding);
+
+
+        // this.gridPoint.multiply(dimensions.add(padding)).add(TileDrawing.ORIGIN_POINT);
+
+        // mátrix művelet lesz 
+        point1 = TileDrawing.baseMatrix.apply(this.gridPoint.multiply(dimensions.add(padding))).add(TileDrawing.ORIGIN_POINT);
+
+
+
+        // console.log(`x, y: ${this.gridPoint.x}, ${this.gridPoint.y}`);
+
+        // const point = new Point(x, y);
+        const point = point1;
+
         const container = new Container();
         const sprite = new Sprite(texture);
 
-        container.position.set(x, y);
+        container.position.set(point.x, point.y);
 
         sprite.width = this.width;
         sprite.height = this.height;

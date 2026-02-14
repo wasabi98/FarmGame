@@ -2,11 +2,11 @@ import  BaseTile  from "./BaseTile.js";
 
 export default class FarmLandTile extends BaseTile
 {
-    constructor(x, y)
+    constructor(point)
     {
-        super(x, y);
+        super(point);
         this.crop = null;
-        this.isBarren = true
+        this.isBarren = true;
     }
     setCrop(crop)
     {
