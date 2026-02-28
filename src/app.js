@@ -74,7 +74,7 @@ async function initApp()
     const RECT_PADDING = TileDrawing.RECT_PADDING;
 
     TileDrawing.ORIGIN_POINT.x = (app.renderer.width / 2) - (RECT_WIDTH * gridManager.grid.length + RECT_PADDING * (gridManager.grid.length - 1)) / 2;
-    TileDrawing.ORIGIN_POINT.y = (app.renderer.height / 2) /*- (RECT_HEIGHT * gridManager.grid[0].length + RECT_PADDING * (gridManager.grid[0].length - 1)) / 2*/;
+    TileDrawing.ORIGIN_POINT.y = (app.renderer.height / 2) /*- (RECT_HEIGHT / 2 * gridManager.grid[0].length + RECT_PADDING * (gridManager.grid[0].length - 1)) / 2*/;
 
     gridManager.grid.forEach(i => {
         i.forEach( j => {
